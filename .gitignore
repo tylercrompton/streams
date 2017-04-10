@@ -1,0 +1,14 @@
+# Build
+*.py[cod]
+
+# Distribution
+*.egg-info/
+dist/
+
+# Virtual Environment
+bin/
+include/
+lib/
+.Python
+pyvenv.cfg
+
