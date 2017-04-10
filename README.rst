@@ -106,35 +106,16 @@ But creating an infinite stream of ones or natural numbers could easily be done
 with builtin functions or standard library functions or even with generators.
 So let's get into the more interesting stuff.
 
-To start, let's create a function that's similar to but much more general than
-the :python:`add_streams` function that we created earlier. We could actually
-use this function to define :python:`add_streams` if we wanted to do so.
-
-::
-
-    >>> from operator import attrgetter
-    >>> def map_streams(fn, *streams):
-    ...     return Stream(
-    ...         fn(*map(attrgetter('value'), streams)),
-    ...         lambda: map_streams(
-    ...             fn,
-    ...             *map(attrgetter('next'), streams)
-    ...         )
-    ...     )
-    ...
-
-This function is equivalent to the built-in |map|_ class except that it works
-specifically on streams—not general iterables.
-
-Now, let's calculate π. We'll do this with the `Leibniz series`_. The most
+Now, let's calculate π. We'll do this via the `Leibniz series`_. The most
 straightforward way to do this is to create a stream for the numerators and a
 stream for the denominators and then perform an element-wise division on them.
 
 ::
 
     >>> numerators = Stream(4, lambda: Stream(-4, lambda: numerators))
-    >>> denominators = Stream(1, lambda: map_streams(lambda x: x + 2, denominators))
-    >>> leibniz = map_streams(lambda a, b: a / b, numerators, denominators)
+    >>> denominators = Stream(1, lambda: Stream.map(lambda x: x + 2, denominators))
+    >>> from operator import truediv
+    >>> leibniz = Stream.map(truediv, numerators, denominators)
     >>> list(leibniz[:10])
     [4.0, -1.3333333333333333, 0.8, -0.5714285714285714, 0.4444444444444444, -0.36363636363636365, 0.3076923076923077, -0.26666666666666666, 0.23529411764705882, -0.21052631578947367]
 
@@ -149,7 +130,7 @@ including the item at index ``i``.
 
 ::
 
-    >>> partial_sums = Stream(leibniz.cursor.value, lambda: map_streams(add, leibniz[1:], partial_sums))
+    >>> partial_sums = Stream(leibniz.cursor.value, lambda: Stream.map(add, leibniz[1:], partial_sums))
     >>> list(partial_sums[:10])
     [4.0, 2.666666666666667, 3.466666666666667, 2.8952380952380956, 3.3396825396825403, 2.9760461760461765, 3.2837384837384844, 3.017071817071818, 3.2523659347188767, 3.0418396189294032]
 
@@ -216,7 +197,7 @@ create a stream of the first value of each stream in the tableau.
 
 ::
 
-    >>> acceleration = tableau.map(attrgetter('value'))
+    >>> acceleration = Stream.map(attrgetter('value'), tableau)
     >>> list(acceleration[:10])
     [4.0, 3.166666666666667, 3.142105263157895, 3.141599357319005, 3.1415927140337785, 3.1415926539752927, 3.1415926535911765, 3.141592653589778, 3.1415926535897953, 3.141592653589795]
 
