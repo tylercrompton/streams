@@ -10,42 +10,24 @@ implemented with stream nodes.
 
 The most powerful feature of streams_ is the ability to use `lazy evaluation`_.
 For example, consider a stream of `natural numbers`_. The value of the first
-node could be provided explicitly and the next property on that node could
+node could be provided explicitly and the next property on that node could be
 provided as the previous node's value incremented by one. Admittedly, this is a
-trivial example, but the goal is to express how streams are capable of so many
+trivial example, but the point is to express how streams are capable of so many
 tasks.
 
 One of the things that makes streams so capable is that one can traverse them
 multiple times without changing their internal structure. This is unlike
 iterators_ which discard data as one iterates through them.
 
-Stream nodes are not necessarily exclusive to a single `data structure`_. A
-stream node could potentially be shared by multiple data structures. One
-possibility of this could be two streams that use another shared stream as a
-basis for their own values. For example, consider a stream ``N`` of natural
-numbers. A stream of `Pythagorean triples`_ could have three references to
-``N`` while a stream of the components of the `harmonic sequence`_ could have a
-reference to N as well. One could argue that each stream is its own data
-structure and any sharing of nodes in such a manner is no different than
-sharing an object (e.g. |sys.stdout|_) between multiple objects, which could be
-a fair argument. However, consider two stream nodes, each of which is a member
-of a “separate” `linked list`_. Perhaps these linked lists converge and use the
-same exact node instances at some point.
-
 If you're not sure which class to use, you probably want
 :python:`SinglyLinkedStream`. For the sake of brevity, you might want to create
 an alias for the class (e.g. :python:`Stream = SinglyLinkedStream`).
 
-.. note::
-   This module does have a few limitations due to Python's lack of `tail
-   recursion elimination`_. With that said, care has been taken to avoid this
-   issue where possible.
-
 Examples
 ========
 
-If you just want to get straight to the code, feel free to peruse the
-the ``examples/`` directory.
+If you want to dive straight into the code, feel free to peruse the the
+``examples/`` directory.
 
 First, let's import the :python:`SinglyLinkedStream` class.
 
@@ -63,37 +45,9 @@ Next, we'll create a stream of ones.
 
 The first argument_ to the :python:`Stream` constructor is the value of the
 node that :python:`ones` will refer to. The second argument is a thunk_ that
-returns either the next stream node or a stream whose cursor is the next stream
-node.
+returns the next node.
 
-To do the next step, we'll need to create a helper function to do element-wise
-addition.
-
-::
-
-    >>> def add_streams(a, b):
-    ...     return Stream(a.value + b.value, lambda: add_streams(a[1:], b[1:]))
-    ... 
-
-Now, let's create a stream of the natural numbers:
-
-::
-
-    >>> ints = Stream(1, lambda: add_streams(ints, ones))
-    >>> ints
-    SinglyLinkedStream(1, <function <lambda> at 0x10317cc80>, does_memoize=True)
-
-Notice that we have been defining our streams with implicit recursion_. This is
-common when working with streams as it makes code quite concise and allows for
-powerful techniques. When we create a function_ in Python, a closure_ is
-created with that function and the defining environment. This allows us to
-reference `free variables`_ (including ones that had not been defined at the
-time that the function was created) inside the function body from any enclosing
-scope.
-
-A shortcut that we'll be taking advantage of later on is :python:`Stream.map`.
-For example, we can create a stream of the natural numbers with the following,
-more concise code:
+To do the next step, we'll need to create a stream of the natural numbers.
 
 ::
 
@@ -102,9 +56,17 @@ more concise code:
    >>> ints
    SinglyLinkedStream(1, <function <lambda> at 0x10317cc80>, does_memoize=True)
 
+Notice that we have been defining our streams with implicit recursion_. This is
+common when working with streams as it makes code quite concise and allows for
+powerful techniques. When we create a function_ in Python, a closure_ is
+created, which contains that function and the defining environment. This allows
+us to reference `free variables`_ (including ones that had not been defined at
+the time that the function was created) inside the function body from any
+enclosing scope.
+
 But creating an infinite stream of ones or natural numbers could easily be done
-with builtin functions or standard library functions or even with generators.
-So let's get into the more interesting stuff.
+with built-in functions, standard library functions, or generators. So let's
+get into the more interesting stuff.
 
 Now, let's calculate π. We'll do this via the `Leibniz series`_. The most
 straightforward way to do this is to create a stream for the numerators and a
@@ -121,8 +83,8 @@ stream for the denominators and then perform an element-wise division on them.
 
 We now have a stream for the Leibniz sequence, but π is the *series*. How do we
 take the sum of an infinite stream of numbers? Unfortunately, we can't—at
-least not without a calculus library. So our next best option is to take the
-sum of some finite number of items.
+least not without calculus. So our next best option is to take the sum of some
+finite number of items.
 
 To do that, let's create a stream for the partial sums where the item at index
 ``i`` is the summation of all of the numbers in the sequence up to and
@@ -168,10 +130,10 @@ relatively simple `Shanks transformation`_. So let's get to it.
 The reasoning that our implementation of :python:`shanks_transformation`
 slightly deviates from the formal definition of Shanks transformation is
 outside the scope of the tutorial. But an important thing to note is that
-despite the fact that we retrieved values downstream, the original stream's
-state remains in tact, allowing us to get the next value of the transformation
-in the same manner. Also note that our sequence is converging far more quickly
-than the partial sums sequence was converging. We're getting close.
+despite our retrieval of downstream values, the original stream's state remains
+intact, allowing us to get the next value of the transformation in the same
+manner. Also note that our sequence is converging far more quickly than the
+partial sums sequence was converging. We're getting closer.
 
 It turns out that you can apply the Shanks transformation to the sequence
 multiple times. You can do this as many times as you want. Due to restrictions
