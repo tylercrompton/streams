@@ -8,25 +8,26 @@ Streams
 If an `abstract data type`_ can be implemented with nodes_, it can be
 implemented with stream nodes.
 
-The most powerful feature of streams_ is the ability to use `lazy evaluation`_.
-For example, consider a stream of `natural numbers`_. The value of the first
-node could be provided explicitly and the next property on that node could be
-provided as the previous node's value incremented by one. Admittedly, this is a
-trivial example, but the point is to express how streams are capable of so many
-tasks.
+The most powerful feature of streams_ is the ability to leverage `lazy
+evaluation`_. For example, consider a stream of `natural numbers`_. The value
+of the first node would be explicitly set to :python:`1` and the following
+node, when needed, would be generated to hold the value of the previous node's
+value incremented by one and to be able to generate the subsequent node in a
+similar manner. Admittedly, this is a trivial example, but the point is to
+express how streams are capable of so many tasks.
 
-One of the things that makes streams so capable is that one can traverse them
-multiple times without changing their internal structure. This is unlike
-iterators_ which discard data as one iterates through them.
+One of the things that makes streams so capable is their ability to be
+traversed multiple times without changing their internal structure. This is
+unlike iterators_ which discard data as one iterates through them.
 
-If you're not sure which class to use, you probably want
+If you're unsure of which class to use, you probably want
 :python:`SinglyLinkedStream`. For the sake of brevity, you might want to create
 an alias for the class (e.g. :python:`Stream = SinglyLinkedStream`).
 
 Examples
 ========
 
-If you want to dive straight into the code, feel free to peruse the the
+If you want to dive straight into the code, feel free to peruse the
 ``examples/`` directory.
 
 First, let's import the :python:`SinglyLinkedStream` class.
@@ -60,13 +61,12 @@ Notice that we have been defining our streams with implicit recursion_. This is
 common when working with streams as it makes code quite concise and allows for
 powerful techniques. When we create a function_ in Python, a closure_ is
 created, which contains that function and the defining environment. This allows
-us to reference `free variables`_ (including ones that had not been defined at
-the time that the function was created) inside the function body from any
-enclosing scope.
+us to reference `free variables`_ (including those that have not yet been
+defined) inside the function body from any enclosing scope.
 
-But creating an infinite stream of ones or natural numbers could easily be done
-with built-in functions, standard library functions, or generators. So let's
-get into the more interesting stuff.
+But creating an indefinitely long stream of ones or natural numbers could
+easily be done with built-in functions, standard library functions, or
+generators. So let's get into the more interesting stuff.
 
 Now, let's calculate π. We'll do this via the `Leibniz series`_. The most
 straightforward way to do this is to create a stream for the numerators and a
@@ -82,9 +82,9 @@ stream for the denominators and then perform an element-wise division on them.
     [4.0, -1.3333333333333333, 0.8, -0.5714285714285714, 0.4444444444444444, -0.36363636363636365, 0.3076923076923077, -0.26666666666666666, 0.23529411764705882, -0.21052631578947367]
 
 We now have a stream for the Leibniz sequence, but π is the *series*. How do we
-take the sum of an infinite stream of numbers? Unfortunately, we can't—at
-least not without calculus. So our next best option is to take the sum of some
-finite number of items.
+programmatically take the sum of an infinite sequence? Unfortunately, we
+can't—at least not without calculus. So our next best option is to take the sum
+of some finite number of items.
 
 To do that, let's create a stream for the partial sums where the item at index
 ``i`` is the summation of all of the numbers in the sequence up to and
@@ -186,7 +186,7 @@ the order of 500 quadrillion. Sixty iterations is obviously much better.
 .. _function: https://en.wikipedia.org/wiki/Subroutine
 .. _harmonic sequence: https://en.wikipedia.org/wiki/Harmonic_series_(mathematics)
 .. _iterators: https://docs.python.org/3/glossary.html#term-iterator
-.. |itertools.tee| replace:: :python:`itertools.replace`
+.. |itertools.tee| replace:: :python:`itertools.tee`
 .. _itertools.tee: https://docs.python.org/3/library/itertools.html#itertools.tee
 .. _lazy evaluation: https://en.wikipedia.org/wiki/Lazy_evaluation
 .. _Leibniz series: https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80

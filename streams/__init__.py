@@ -1,7 +1,7 @@
 """If an abstract data type can be implemented with nodes, it can be
 implemented with streams.
 
-Before reading further, one needs to understand the streams in this
+Before reading further, one needs to understand that the streams in this
 package also serve the purpose of individual nodes. That is, a stream is
 a node and a node is a stream. This decision was made for the sake of
 efficiency and simplicity. When discussing this package, care shall be
@@ -9,7 +9,7 @@ taken to use the most conceptually proper term to deter confusion.
 
 The most powerful feature of streams is the ability to use lazy
 evaluation. For example, consider a stream of natural numbers. The value
-of the first node could be provided explicitly, the next property on
+of the first node could be provided explicitly, the ``next`` property on
 that node could be provided as the previous node's value incremented by
 one, and so on and so forth. Admittedly, this is a trivial example, but
 the goal is to express how streams are capable of numerous tasks.
@@ -196,7 +196,7 @@ class SinglyLinkedStream(LinearStream):
         function applied to each item in the streams.
 
         fn is the function to be applied to each value in the stream.
-        
+
         streams is the tuple of streams that contain the values to be
         mapped.
 
@@ -458,7 +458,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
         function applied to each item in the streams.
 
         fn is the function to be applied to each value in the stream.
-        
+
         streams is the tuple of streams that contain the values to be
         mapped.
 
@@ -733,7 +733,7 @@ def thunk_init(thunk, init):
     shouldn't be changed.
 
     thunk is the function that returns the object of interest.
-    
+
     init is the function that initializes the return value of thunk.
     """
 

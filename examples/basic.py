@@ -1,7 +1,7 @@
 # See README.rst at the top level directory of this repository for an
 # explanation of the code.
 
-from operator import add, attrgetter
+from operator import add
 
 from streams import SinglyLinkedStream as Stream
 
