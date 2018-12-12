@@ -30,7 +30,7 @@ class SinglyLinkedStream(LinearStream, Generic[VT]):
     def __init__(
             self,
             value: VT,
-            next_thunk: Callable[[], 'SinglyLinkedStream[VT]'],
+            next_thunk: Callable[[], SinglyLinkedStream[VT]],
             *,
             does_memoize: bool=True
     ) -> None:
@@ -46,7 +46,7 @@ class SinglyLinkedStream(LinearStream, Generic[VT]):
         ...
 
     @property
-    def next(self) -> 'SinglyLinkedStream[VT]':
+    def next(self) -> SinglyLinkedStream[VT]:
         ...
 
     @property
@@ -60,14 +60,14 @@ class SinglyLinkedStream(LinearStream, Generic[VT]):
     def filter(
             self,
             predicate: Callable[[VT], bool]=None,
-    ) -> 'SinglyLinkedStream[VT]':
+    ) -> SinglyLinkedStream[VT]:
         ...
 
     @classmethod
     def map(
             cls,
             fn: Callable[..., MT],
-            *streams: 'SinglyLinkedStream',
+            *streams: SinglyLinkedStream,
             does_memoize: bool=True
     ):
         ...
@@ -76,16 +76,16 @@ class SinglyLinkedStream(LinearStream, Generic[VT]):
     def _from_iterator(
             cls,
             iterator: Iterator[VT],
-    ) -> 'SinglyLinkedStream[VT]':
+    ) -> SinglyLinkedStream[VT]:
         ...
 
-    def _starter(self, n: int) -> 'SinglyLinkedStream[VT]':
+    def _starter(self, n: int) -> SinglyLinkedStream[VT]:
         ...
 
-    def _stepper(self, n: int) -> 'SinglyLinkedStream[VT]':
+    def _stepper(self, n: int) -> SinglyLinkedStream[VT]:
         ...
 
-    def _stopper(self, n: int) -> 'SinglyLinkedStream[VT]':
+    def _stopper(self, n: int) -> SinglyLinkedStream[VT]:
         ...
 
 
@@ -98,8 +98,8 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible, Generic[VT]):
     def __init__(
             self,
             value: VT,
-            next_thunk: Callable[[], 'DoublyLinkedStream[VT]'],
-            previous_thunk: Callable[[], 'DoublyLinkedStream[VT]']=None,
+            next_thunk: Callable[[], DoublyLinkedStream[VT]],
+            previous_thunk: Callable[[], DoublyLinkedStream[VT]]=None,
             *,
             does_memoize: bool=True
     ) -> None:
@@ -107,28 +107,28 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible, Generic[VT]):
         self._previous = ...
         self._previous_thunk = ...
 
-    def __reversed__(self) -> 'DoublyLinkedStream[VT]':
+    def __reversed__(self) -> DoublyLinkedStream[VT]:
         ...
 
     @property
-    def next(self) -> 'DoublyLinkedStream[VT]':
+    def next(self) -> DoublyLinkedStream[VT]:
         ...
 
     @property
-    def previous(self) -> 'DoublyLinkedStream[VT]':
+    def previous(self) -> DoublyLinkedStream[VT]:
         ...
 
     def filter(
             self,
             predicate: Callable[[VT], bool]=None,
-    ) -> 'DoublyLinkedStream[VT]':
+    ) -> DoublyLinkedStream[VT]:
         ...
 
     @classmethod
     def map(
             cls,
             fn: Callable[..., MT],
-            *streams: 'DoublyLinkedStream',
+            *streams: DoublyLinkedStream,
             does_memoize: bool=True
     ):
         ...
@@ -139,18 +139,18 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible, Generic[VT]):
             iterator: Iterator[VT],
             previous_thunk: Callable[
                 [],
-                'DoublyLinkedStream[VT]',
+                DoublyLinkedStream[VT],
             ]=lambda: None,
-    ) -> 'DoublyLinkedStream[VT]':
+    ) -> DoublyLinkedStream[VT]:
         ...
 
-    def _starter(self, n: int) -> 'DoublyLinkedStream[VT]':
+    def _starter(self, n: int) -> DoublyLinkedStream[VT]:
         ...
 
-    def _stepper(self, n: int) -> 'DoublyLinkedStream[VT]':
+    def _stepper(self, n: int) -> DoublyLinkedStream[VT]:
         ...
 
-    def _stopper(self, n: int) -> 'DoublyLinkedStream[VT]':
+    def _stopper(self, n: int) -> DoublyLinkedStream[VT]:
         ...
 
 

@@ -14,8 +14,8 @@ __all__ = (
     'Stream',
 )
 
-MT = TypeVar('MT')  # mapped type
-VT = TypeVar('VT')  # value type
+MT = TypeVar('MT')  # type of values after mapping
+VT = TypeVar('VT')  # type of values before or without mapping
 
 
 class Stream(Container, Generic[VT], metaclass=ABCMeta):
@@ -39,7 +39,7 @@ class Stream(Container, Generic[VT], metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def map(self, fn: Callable[[VT], MT]) -> 'Stream[MT]':
+    def map(self, fn: Callable[[VT], MT]) -> Stream[MT]:
         ...
 
 
@@ -58,14 +58,14 @@ class LinearStream(Stream, Iterable, Generic[VT], metaclass=ABCMeta):
     def filter(
             self,
             predicate: Callable[[VT], bool]=None,
-    ) -> 'LinearStream[VT]':
+    ) -> LinearStream[VT]:
         ...
 
     @classmethod
     def from_iterable(
             cls,
             iterable: Iterable[VT],
-    ) -> 'LinearStream[VT]':
+    ) -> LinearStream[VT]:
         ...
 
     @classmethod
@@ -73,17 +73,17 @@ class LinearStream(Stream, Iterable, Generic[VT], metaclass=ABCMeta):
     def _from_iterator(
             cls,
             iterator: Iterator[VT],
-    ) -> 'LinearStream[VT]':
+    ) -> LinearStream[VT]:
         ...
 
     @abstractmethod
-    def _starter(self, n: int) -> 'LinearStream[VT]':
+    def _starter(self, n: int) -> LinearStream[VT]:
         ...
 
     @abstractmethod
-    def _stepper(self, n: int) -> 'LinearStream[VT]':
+    def _stepper(self, n: int) -> LinearStream[VT]:
         ...
 
     @abstractmethod
-    def _stopper(self, n: int) -> 'LinearStream[VT]':
+    def _stopper(self, n: int) -> LinearStream[VT]:
         ...
