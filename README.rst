@@ -5,8 +5,8 @@ Streams
 .. role:: python(code)
    :language: python
 
-If an `abstract data type`_ can be implemented with nodes_, it can be
-implemented with stream nodes.
+If an `abstract data type`_ can be implemented with nodes_, then it can be
+implemented via stream nodes.
 
 The most powerful feature of streams_ is the ability to leverage `lazy
 evaluation`_. For example, consider a stream of `natural numbers`_. The value
@@ -28,7 +28,7 @@ Examples
 ========
 
 If you want to dive straight into the code, feel free to peruse the
-``examples/`` directory.
+“examples/” directory.
 
 First, let's import the :python:`SinglyLinkedStream` class.
 

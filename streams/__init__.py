@@ -1,5 +1,5 @@
-"""If an abstract data type can be implemented with nodes, it can be
-implemented with streams.
+"""If an abstract data type can be implemented with nodes, then it can
+be implemented via streams.
 
 Before reading further, one needs to understand that the streams in this
 package also serve the purpose of individual nodes. That is, a stream is
@@ -12,25 +12,13 @@ evaluation. For example, consider a stream of natural numbers. The value
 of the first node could be provided explicitly, the ``next`` property on
 that node could be provided as the previous node's value incremented by
 one, and so on and so forth. Admittedly, this is a trivial example, but
-the goal is to express how streams are capable of numerous tasks.
+the point is to express how streams are capable of numerous tasks.
 
 One of the things that makes streams so capable is that one can traverse
 them multiple times without changing their internal structure. This is
 unlike iterators which discard data as one iterates through them.
 
-Stream nodes are not necessarily exclusive to a single data structure.
-One possibility of this could be two streams that share another stream
-as a basis for their own values. For example, consider a stream ``N`` of
-natural numbers. A stream of Pythagorean triples could have three
-references to ``N`` while a stream of the components of the harmonic
-sequence could have a reference to ``N`` as well. One could argue that
-each stream is its own data structure and any sharing of nodes in such a
-manner is no different than sharing an object among multiple objects,
-which could be a fair argument. However, consider two stream nodes, each
-of which is a member of a “separate” stream. Perhaps these nodes point
-to the same node.
-
-If you're not sure which class to use, you probably want
+If you're unsure of which class to use, then you probably want
 ``SinglyLinkedStream``. For the sake of brevity, you might want to create
 an alias for the class (e.g. ``Stream = SinglyLinkedStream``).
 
