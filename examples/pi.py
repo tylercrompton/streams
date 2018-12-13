@@ -58,7 +58,7 @@ if __name__ == '__main__':
     tableau = make_tableau(shanks_transformation, partial_sums)
     print(
         'The tableau of successive Shanks transformations of the partial sums '
-        ' of the Leibniz sequence:'
+        'of the Leibniz sequence:'
     )
     pprint(list(tableau[:10]))
     print()

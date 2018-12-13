@@ -1,5 +1,5 @@
-"""If an abstract data type can be implemented with nodes, it can be
-implemented with streams.
+"""If an abstract data type can be implemented with nodes, then it can
+be implemented via streams.
 
 Before reading further, one needs to understand that the streams in this
 package also serve the purpose of individual nodes. That is, a stream is
@@ -12,7 +12,7 @@ evaluation. For example, consider a stream of natural numbers. The value
 of the first node could be provided explicitly, the ``next`` property on
 that node could be provided as the previous node's value incremented by
 one, and so on and so forth. Admittedly, this is a trivial example, but
-the goal is to express how streams are capable of numerous tasks.
+the point is to express how streams are capable of numerous tasks.
 
 One of the things that makes streams so capable is that one can traverse
 them multiple times without changing their internal structure. This is
