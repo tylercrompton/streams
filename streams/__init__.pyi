@@ -69,7 +69,7 @@ class SinglyLinkedStream(LinearStream, Generic[VT]):
             fn: Callable[..., MT],
             *streams: SinglyLinkedStream,
             does_memoize: bool=True
-    ):
+    ) -> SinglyLinkedStream[MT]:
         ...
 
     @classmethod
@@ -130,7 +130,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible, Generic[VT]):
             fn: Callable[..., MT],
             *streams: DoublyLinkedStream,
             does_memoize: bool=True
-    ):
+    ) -> DoublyLinkedStream[MT]:
         ...
 
     @classmethod

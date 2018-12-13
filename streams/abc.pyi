@@ -38,8 +38,9 @@ class Stream(Container, Generic[VT], metaclass=ABCMeta):
     def value(self, value: VT) -> None:
         ...
 
+    @classmethod
     @abstractmethod
-    def map(self, fn: Callable[[VT], MT]) -> Stream[MT]:
+    def map(cls, fn: Callable[..., MT], *streams: Stream) -> Stream[MT]:
         ...
 
 
