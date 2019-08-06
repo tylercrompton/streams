@@ -117,7 +117,7 @@ relatively simple `Shanks transformation`_. So let's get to it.
     ...     s0 = stream.value
     ...     s1 = stream.next.value
     ...     s2 = stream.next.next.value
-    ...     denominator = s0 - s1 - (s1 - s2) 
+    ...     denominator = s0 - s1 - (s1 - s2)
     ...     return Stream(
     ...         s1 if denominator == 0 else s2 - (s2 - s1) ** 2 / denominator,
     ...         lambda: shanks_transformation(stream.next)
@@ -151,7 +151,7 @@ transformation applied to the previous stream.
     ...         stream,
     ...         lambda: make_tableau(transformation, transform(stream))
     ...     )
-    ... 
+    ...
     >>> tableau = make_tableau(shanks_transformation, partial_sums)
 
 Lastly, to get an idea of how quickly our sequence is now converging, let's
