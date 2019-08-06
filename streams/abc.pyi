@@ -2,9 +2,9 @@ from abc import ABCMeta, abstractmethod
 from typing import (
     Callable,
     Container,
-    Generic,
     Iterable,
     Iterator,
+    Optional,
     TypeVar,
     Union,
 )
@@ -18,8 +18,8 @@ MT = TypeVar('MT')  # type of values after mapping
 VT = TypeVar('VT')  # type of values before or without mapping
 
 
-class Stream(Container, Generic[VT], metaclass=ABCMeta):
-    __slots__ = ()
+class Stream(Container[VT], metaclass=ABCMeta):
+    __slots__: Iterable[str]
 
     @abstractmethod
     def __contains__(self, value: VT) -> bool:
@@ -44,8 +44,8 @@ class Stream(Container, Generic[VT], metaclass=ABCMeta):
         ...
 
 
-class LinearStream(Stream, Iterable, Generic[VT], metaclass=ABCMeta):
-    __slots__ = ()
+class LinearStream(Stream[VT], Iterable[VT], metaclass=ABCMeta):
+    __slots__: Iterable[str]
 
     def __getitem__(
             self,
@@ -54,6 +54,11 @@ class LinearStream(Stream, Iterable, Generic[VT], metaclass=ABCMeta):
         ...
 
     def __iter__(self) -> Iterator[VT]:
+        ...
+
+    @property
+    @abstractmethod
+    def next(self) -> Optional[LinearStream[VT]]:
         ...
 
     def filter(
@@ -66,7 +71,8 @@ class LinearStream(Stream, Iterable, Generic[VT], metaclass=ABCMeta):
     def from_iterable(
             cls,
             iterable: Iterable[VT],
-    ) -> LinearStream[VT]:
+            does_memoize: bool=True,
+    ) -> Optional[LinearStream[VT]]:
         ...
 
     @classmethod
@@ -74,7 +80,8 @@ class LinearStream(Stream, Iterable, Generic[VT], metaclass=ABCMeta):
     def _from_iterator(
             cls,
             iterator: Iterator[VT],
-    ) -> LinearStream[VT]:
+            does_memoize: bool=True,
+    ) -> Optional[LinearStream[VT]]:
         ...
 
     @abstractmethod
