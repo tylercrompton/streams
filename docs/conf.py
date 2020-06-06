@@ -52,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Streams'
-copyright = '2016, Tyler Crompton'
+copyright = '2020, Tyler Crompton'
 author = 'Tyler Crompton'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -282,9 +282,16 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Streams', 'Streams Documentation',
-     author, 'Streams', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        'Streams',
+        'Streams Documentation',
+        author,
+        'Streams',
+        'Provides stream classes inspired by Scheme and abstracts the '
+        'concept to other abstract data types.',
+        'Scientific Computation',
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.
