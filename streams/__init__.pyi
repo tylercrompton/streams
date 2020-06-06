@@ -1,3 +1,4 @@
+from enum import auto, Enum
 from typing import (
     Any,
     Callable,
@@ -20,6 +21,11 @@ __all__ = (
 
 MT = TypeVar('MT')  # type of values after mapping
 VT = TypeVar('VT')  # type of values before or without mapping
+
+
+class TraversalDirection(Enum):
+    NEXT: TraversalDirection
+    PREVIOUS: TraversalDirection
 
 
 class SinglyLinkedStream(LinearStream[VT]):
@@ -132,6 +138,13 @@ class DoublyLinkedStream(SinglyLinkedStream[VT], Reversible[VT]):
     ) -> DoublyLinkedStream[MT]:
         ...
 
+    def _filter(
+            self,
+            predicate: Callable[[VT], bool],
+            traversal_direction: TraversalDirection,
+    ) -> Optional[SinglyLinkedStream[VT]]:
+        ...
+
     @classmethod
     def _from_iterator(
             cls,
@@ -140,6 +153,7 @@ class DoublyLinkedStream(SinglyLinkedStream[VT], Reversible[VT]):
                 [],
                 DoublyLinkedStream[VT],
             ]=lambda: None,
+            does_memoize: bool=True
     ) -> Optional[DoublyLinkedStream[VT]]:
         ...
 

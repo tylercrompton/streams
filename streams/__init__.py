@@ -12,7 +12,7 @@ evaluation. For example, consider a stream of natural numbers. The value
 of the first node could be provided explicitly, the ``next`` property on
 that node could be provided as the previous node's value incremented by
 one, and so on and so forth. Admittedly, this is a trivial example, but
-the point is to express how streams are capable of numerous tasks.
+the point is to express that streams can be self-referential.
 
 One of the things that makes streams so capable is that one can traverse
 them multiple times without changing their internal structure. This is
@@ -151,9 +151,7 @@ class SinglyLinkedStream(LinearStream):
         node = self
 
         while not predicate(node.value):
-            node = node.next
-
-            if node is None:
+            if (node := node.next) is None:
                 return node
 
         return self.__class__(
@@ -194,9 +192,7 @@ class SinglyLinkedStream(LinearStream):
         node = self
 
         for _ in range(n):
-            node = node.next
-
-            if node is None:
+            if (node := node.next) is None:
                 raise IndexError('node index out of range.')
 
         return node
@@ -222,9 +218,7 @@ class SinglyLinkedStream(LinearStream):
         """Returns a new stream that is limited to n nodes."""
 
         def stop(node, i):
-            next_ = node.next
-
-            if next_ is None:
+            if (next_ := node.next) is None:
                 if i > 1:
                     raise IndexError('node index out of range.')
 
@@ -232,14 +226,11 @@ class SinglyLinkedStream(LinearStream):
 
             return next_._stopper(i - 1)
 
-        if n == 0:
-            return None
-        else:
-            return self.__class__(
-                self._value,
-                lambda: stop(self, n),
-                does_memoize=self.does_memoize,
-            )
+        return None if n == 0 else self.__class__(
+            self._value,
+            lambda: stop(self, n),
+            does_memoize=self.does_memoize,
+        )
 
     @classmethod
     def _from_iterator(cls, iterator, does_memoize=True):
@@ -311,15 +302,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
         as this will not terminate if the stream is infinite.
         """
 
-        for candidate in self:
-            if candidate == value:
-                return True
-
-        for candidate in reversed(self).next:
-            if candidate == value:
-                return True
-
-        return False
+        return value in iter(self) or value in iter(reversed(self).next)
 
     def __repr__(self):
         """Returns the canonical string representation of the node."""
@@ -348,7 +331,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
                 except AttributeError:
                     pass
 
-            node = self.__class__(
+            return (node := self.__class__(
                 self.value,
                 thunk_init(
                     lambda: reversed_node(self.previous),
@@ -359,9 +342,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
                     previous_init,
                 ),
                 does_memoize=True,
-            )
-
-            return node
+            ))
 
         return self.__class__(
             self.value,
@@ -446,7 +427,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
             def previous_init(obj):
                 obj._next = node
 
-            node = cls(
+            return (node := cls(
                 fn(*map(attrgetter('value'), streams)),
                 thunk_init(
                     lambda: cls.map(
@@ -465,9 +446,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
                     previous_init,
                 ),
                 does_memoize=True,
-            )
-
-            return node
+            ))
 
         return cls(
             fn(*map(attrgetter('value'), streams)),
@@ -515,7 +494,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
             def previous_init(obj):
                 obj._next = new_node
 
-            new_node = node.__class__(
+            return (new_node := node.__class__(
                 node.value,
                 thunk_init(
                     lambda: node.next._filter(
@@ -532,9 +511,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
                     previous_init,
                 ),
                 does_memoize=True,
-            )
-
-            return new_node
+            ))
 
         return self.__class__(
             node.value,
@@ -570,9 +547,9 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
         try:
             value = next(iterator)
         except StopIteration:
-            return cls()
+            return None
 
-        node = cls(
+        return (node := cls(
             value,
             lambda: cls._from_iterator(
                 iterator,
@@ -581,9 +558,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
             ),
             previous_thunk,
             does_memoize=does_memoize,
-        )
-
-        return node
+        ))
 
     def _starter(self, n):
         """Returns the node that is n nodes away from self."""
@@ -635,7 +610,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
                 except AttributeError:
                     pass
 
-            node = self.__class__(
+            return (node := self.__class__(
                 self._value,
                 thunk_init(
                     lambda: step_forward(self, n),
@@ -646,9 +621,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
                     previous_init,
                 ),
                 does_memoize=self.does_memoize,
-            )
-
-            return node
+            ))
 
         return self.__class__(
             self._value,
@@ -676,7 +649,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
                 except AttributeError:
                     pass
 
-            node = self.__class__(
+            return (node := self.__class__(
                 self._value,
                 thunk_init(
                     lambda: self.next._stopper(n - 1),
@@ -687,9 +660,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
                     previous_init,
                 ),
                 does_memoize=True,
-            )
-
-            return node
+            ))
 
         return self.__class__(
             self._value,
@@ -715,8 +686,7 @@ def thunk_init(thunk, init):
         docstring for thunk_init for more information.
         """
 
-        obj = thunk()
-        init(obj)
+        init(obj := thunk())
 
         return obj
 

@@ -19,10 +19,7 @@ class Stream(Container, metaclass=ABCMeta):
     def __repr__(self):
         """Returns the canonical string representation of the node."""
 
-        return '{}({})'.format(
-            self.__class__.__name__,
-            repr(self.value),
-        )
+        return f'{self.__class__.__name__}({repr(self.value)})'
 
     @property
     @abstractmethod
@@ -74,8 +71,7 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
         if start is not None:
             if start < 0:
                 raise ValueError(
-                    'start must be nonnegative integer, not {}'.format(
-                        start)
+                    f'start must be nonnegative integer, not {start}'
                 )
 
             node = node._starter(start)
@@ -83,7 +79,7 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
         if stop is not None:
             if stop < 0:
                 raise ValueError(
-                    'stop must be nonnegative integer, not {}'.format(stop)
+                    f'stop must be nonnegative integer, not {stop}'
                 )
 
             if start is not None:
@@ -99,7 +95,7 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
         if step is not None:
             if step <= 0:
                 raise ValueError(
-                    'step must be positive integer, not {}'.format(step)
+                    f'step must be positive integer, not {step}'
                 )
 
             node = node._stepper(step)
