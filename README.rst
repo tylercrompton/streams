@@ -14,7 +14,7 @@ of the first node would be explicitly set to :python:`1` and the following
 node, when needed, would be generated to hold the value of the previous node's
 value incremented by one and to be able to generate the subsequent node in a
 similar manner. Admittedly, this is a trivial example, but the point is to
-express how streams are capable of so many tasks.
+express that streams can be self-referential.
 
 One of the things that makes streams so capable is their ability to be
 traversed multiple times without changing their internal structure. This is
@@ -97,10 +97,10 @@ including the item at index ``i``.
     [4.0, 2.666666666666667, 3.466666666666667, 2.8952380952380956, 3.3396825396825403, 2.9760461760461765, 3.2837384837384844, 3.017071817071818, 3.2523659347188767, 3.0418396189294032]
 
 We now have a stream of approximations of π. Admittedly, we still haven't done
-anything that can't easily be done in a fresh install of Python. Now, we'll see
-the true power of streams. In Python, an iterator can represent an infinite
-number of values. But what it can't do is maintain its state when a value is
-retrieved from it. Technically, you could duplicate the iterators with
+anything that can't easily be done in a fresh installation of Python. Now,
+we'll see the true power of streams. In Python, an iterator can represent an
+infinite number of values. But what it can't do is maintain its state when a
+value is retrieved from it. Technically, you could duplicate an iterator via
 |itertools.tee|_, but that's fairly cumbersome to use for what we're about to
 do.
 
@@ -137,11 +137,11 @@ partial sums sequence was converging. We're getting closer.
 
 It turns out that you can apply the Shanks transformation to the sequence
 multiple times. You can do this as many times as you want. Due to restrictions
-in Python, there is a practical limit to how many times you can can do this
+in Python, there exists a practical limit to how many times you can can do this
 before causing a stack overflow, but we won't meet that limit in this example.
 
 Next, let's create a tableau of successive transformations. In other words,
-we'll create a stream of streams. Each successive stream will be the
+we'll create a stream of streams such that each successive stream will be the
 transformation applied to the previous stream.
 
 ::
@@ -149,7 +149,7 @@ transformation applied to the previous stream.
     >>> def make_tableau(transform, stream):
     ...     return Stream(
     ...         stream,
-    ...         lambda: make_tableau(transformation, transform(stream))
+    ...         lambda: make_tableau(transform, transform(stream))
     ...     )
     ...
     >>> tableau = make_tableau(shanks_transformation, partial_sums)
@@ -176,7 +176,8 @@ As one can see, this accelerates quite quickly. In fact,
 
 I'm not entirely certain as to how many iterations it would take to get this
 level of precision in :python:`partial_sums`, but I believe it's somewhere on
-the order of 500 quadrillion. Sixty iterations is obviously much better.
+the order of 500 quadrillion iterations. Sixty iterations is obviously much
+better.
 
 .. _abstract data type: https://en.wikipedia.org/wiki/Abstract_data_type
 .. _argument: https://en.wikipedia.org/wiki/Parameter_(computer_programming)
