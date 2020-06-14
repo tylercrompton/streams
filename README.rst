@@ -182,28 +182,20 @@ better.
 .. _abstract data type: https://en.wikipedia.org/wiki/Abstract_data_type
 .. _argument: https://en.wikipedia.org/wiki/Parameter_(computer_programming)
 .. _closure: https://en.wikipedia.org/wiki/Closure_(computer_programming)
-.. _data structure: https://en.wikipedia.org/wiki/Data_structure
 .. _free variables: https://en.wikipedia.org/wiki/Variable_(computer_science)
 .. _function: https://en.wikipedia.org/wiki/Subroutine
-.. _harmonic sequence: https://en.wikipedia.org/wiki/Harmonic_series_(mathematics)
 .. _iterators: https://docs.python.org/3/glossary.html#term-iterator
 .. |itertools.tee| replace:: :python:`itertools.tee`
 .. _itertools.tee: https://docs.python.org/3/library/itertools.html#itertools.tee
 .. _lazy evaluation: https://en.wikipedia.org/wiki/Lazy_evaluation
 .. _Leibniz series: https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80
-.. _linked list: https://en.wikipedia.org/wiki/Linked_list
 .. |math.pi| replace:: :python:`math.pi`
 .. _math.pi: https://docs.python.org/3/library/math.html#math.pi
-.. |map| replace:: :python:`map`
-.. _map: https://docs.python.org/3/library/functions.html#map
 .. _natural numbers: https://en.wikipedia.org/wiki/Natural_number
 .. _nodes: https://en.wikipedia.org/wiki/Node_(computer_science)
-.. _Pythagorean triples: https://en.wikipedia.org/wiki/Pythagorean_triple
 .. _recursion: https://en.wikipedia.org/wiki/Recursion_(computer_science)
 .. _series acceleration: https://en.wikipedia.org/wiki/Series_acceleration
 .. _Shanks transformation: https://en.wikipedia.org/wiki/Shanks_transformation
 .. _streams: https://en.wikipedia.org/wiki/Stream_(computer_science)
 .. |sys.stdout| replace:: :python:`sys.stdout``
-.. _sys.stdout: https://docs.python.org/3/library/sys.html#sys.stdout
-.. _tail recursion elimination: https://en.wikipedia.org/wiki/Tail_call
 .. _thunk: https://en.wikipedia.org/wiki/Thunk
