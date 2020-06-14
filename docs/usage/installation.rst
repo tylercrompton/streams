@@ -1,0 +1,5 @@
+============
+Installation
+============
+
+Lorem ipsum
