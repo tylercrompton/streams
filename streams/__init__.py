@@ -258,6 +258,8 @@ class SinglyLinkedStream(LinearStream):
 
 
 class DoublyLinkedStream(SinglyLinkedStream, Reversible):
+    """A doubly linked list class implemented as a stream."""
+
     __slots__ = (
         '_previous',
         '_previous_thunk',
