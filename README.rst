@@ -92,7 +92,7 @@ including the item at index ``i``.
 
 ::
 
-    >>> partial_sums = Stream(leibniz.cursor.value, lambda: Stream.map(add, leibniz[1:], partial_sums))
+    >>> partial_sums = Stream(leibniz.value, lambda: Stream.map(add, leibniz[1:], partial_sums))
     >>> list(partial_sums[:10])
     [4.0, 2.666666666666667, 3.466666666666667, 2.8952380952380956, 3.3396825396825403, 2.9760461760461765, 3.2837384837384844, 3.017071817071818, 3.2523659347188767, 3.0418396189294032]
 
