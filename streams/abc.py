@@ -115,7 +115,7 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def next(self, value):
+    def next(self):
         """Returns the next node."""
 
         raise NotImplementedError
