@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Pygments = "==2.3.0"
+Pygments = "==2.9.0"
 setuptools = "*"
 
 [dev-packages]
