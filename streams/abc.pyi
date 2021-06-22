@@ -40,7 +40,12 @@ class Stream(Container[VT], metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def map(cls, fn: Callable[..., MT], *streams: Stream) -> Stream[MT]:
+    def map(
+            cls,
+            fn: Callable[..., MT],
+            *streams: Stream,
+            does_memoize: bool=True
+    ) -> Stream[MT]:
         ...
 
 
