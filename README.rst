@@ -32,9 +32,10 @@ To-do
 Documentation
 =============
 
-To view the documentation, you will need to build it from the source. To build
-the documentation to HTML, navigate to the “docs/” directory and execute the
-command ``make html``. The home page of the documentation will be at
+The documentation can be found at https://pystreams.readthedocs.io/. If you
+prefer to view the documentation locally, you can build it from the source. To
+build the documentation to HTML, navigate to the “docs/” directory and execute
+the command ``make html``. The home page of the documentation will be at
 “docs/build/html/index.html”. For a full list of possible formats in which the
 documentation can be built, see “docs/Makefile” (or “docs/make.bat”).
 
