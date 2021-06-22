@@ -14,3 +14,8 @@ python:
    version: 3.9
    install:
    - requirements: docs/requirements.txt
+
+# Required for Python 3.9 support for now
+build:
+  image: testing
+  
