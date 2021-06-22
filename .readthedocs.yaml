@@ -18,4 +18,3 @@ python:
 # Required for Python 3.9 support for now
 build:
   image: testing
-  
