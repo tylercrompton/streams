@@ -1,10 +1,10 @@
-=======
-Streams
-=======
-
 .. image:: https://readthedocs.org/projects/pystreams/badge/?version=latest
     :target: https://pystreams.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
+
+=======
+Streams
+=======
 
 .. role:: python(code)
    :language: python
