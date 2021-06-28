@@ -6,9 +6,11 @@ name = "pypi"
 [packages]
 
 [dev-packages]
+build = "*"
 sphinx = "*"
 sphinx-autodoc-annotation = "*"
 sphinx-rtd-dark-mode = "*"
+twine = "*"
 
 [requires]
 python_version = "3.9"
