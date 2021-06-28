@@ -8,17 +8,21 @@ Streams
 
 .. role:: python(code)
    :language: python
+   :class: highlight
 
-If an `abstract data type`_ can be implemented with nodes_, then it can be
+Streams is a library to facilitate the use of collections in a way that
+simulates `lazy evaluation`_. This allows for powerfully concise code for
+dynamically building potentially indefinitely large collections. For example,
+one can construct the `Fibonacci sequence`_ in “one” line as follows:
+
+.. code-block:: python
+
+    from operator import add
+    from streams import SinglyLinkedStream as Stream
+    fib = Stream(0, lambda: Stream(1, lambda: Stream.map(add, fib, fib.next)))
+
+If an `abstract data type`_ can be implemented via nodes_, then it can be
 implemented via stream nodes.
-
-The most powerful feature of streams_ is the ability to leverage `lazy
-evaluation`_. For example, consider a stream of `natural numbers`_. The value
-of the first node would be explicitly set to :python:`1` and the following
-node, when needed, would be generated to hold the value of the previous node's
-value incremented by one and to be able to generate the subsequent node in a
-similar manner. Admittedly, this is a trivial example, but the point is to
-express that streams can be self-referential.
 
 One of the things that makes streams so capable is their ability to be
 traversed multiple times without changing their internal structure. This is
@@ -31,7 +35,7 @@ an alias for the class (e.g. :python:`Stream = SinglyLinkedStream`).
 Installation
 ============
 
-To-do
+To do
 
 Documentation
 =============
@@ -43,6 +47,13 @@ the command ``make html``. The home page of the documentation will be at
 “docs/build/html/index.html”. For a full list of possible formats in which the
 documentation can be built, see “docs/Makefile” (or “docs/make.bat”).
 
+Contributing
+============
+
+The code conventions used throughout this project can be found in PEP 8 and PEP
+257. Before submitting a pull request, please be sure that it corresponds to an
+issue. If no such issue exists, then please create one.
+
 License
 =======
 
@@ -51,6 +62,7 @@ This project is licensed under the GNU General Public License, Version 3. See
 
 .. _abstract data type: https://en.wikipedia.org/wiki/Abstract_data_type
 .. _iterators: https://docs.python.org/3/glossary.html#term-iterator
+.. _Fibonacci sequence: https://en.wikipedia.org/wiki/Fibonacci_number
 .. _lazy evaluation: https://en.wikipedia.org/wiki/Lazy_evaluation
 .. _natural numbers: https://en.wikipedia.org/wiki/Natural_number
 .. _nodes: https://en.wikipedia.org/wiki/Node_(computer_science)
