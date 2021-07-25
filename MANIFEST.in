@@ -1,2 +1,1 @@
-recursive-include . *.rst
-include *.txt
+global-include *.pyi
