@@ -1,3 +1,19 @@
+..
+    This file is part of Streams.
+
+    Streams is free software: you can redistribute it and/or modify it under
+    the terms of the GNU General Public License as published by the Free
+    Software Foundation, either version 3 of the License, or (at your option)
+    any later version.
+
+    Streams is distributed in the hope that it will be useful, but WITHOUT ANY
+    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+    details.
+
+    You should have received a copy of the GNU General Public License along
+    with Streams.  If not, see <https://www.gnu.org/licenses/>.
+
 .. image:: https://readthedocs.org/projects/pystreams/badge/?version=latest
     :target: https://pystreams.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
@@ -57,8 +73,17 @@ issue. If no such issue exists, then please create one.
 License
 =======
 
-This project is licensed under the GNU General Public License, Version 3. See
-“LICENSE.txt” for the full text of the license.
+This project is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program.  If not, see <https://www.gnu.org/licenses/>.
 
 .. _abstract data type: https://en.wikipedia.org/wiki/Abstract_data_type
 .. _iterators: https://docs.python.org/3/glossary.html#term-iterator
