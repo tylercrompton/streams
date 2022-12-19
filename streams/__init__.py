@@ -49,9 +49,20 @@ create an alias for the class (e.g. ``Stream = SinglyLinkedStream``).
    avoid this issue where possible.
 """
 
-from collections.abc import Reversible
+from __future__ import annotations
+from collections.abc import (
+    Callable,
+    Iterable,
+    Iterator,
+    Reversible,
+)
 from enum import auto, Enum
 from operator import attrgetter
+from typing import (
+    Any,
+    Optional,
+    TypeVar,
+)
 
 from .abc import LinearStream
 
@@ -61,8 +72,11 @@ __all__ = (
     'thunk_init',
 )
 
+MT = TypeVar('MT')  # type of values after mapping
+VT = TypeVar('VT')  # type of values before or without mapping
 
-def reversed_node(node):
+
+def reversed_node(node: Optional[DoublyLinkedStream]):
     try:
         return reversed(node)
     except TypeError:
@@ -74,17 +88,28 @@ class TraversalDirection(Enum):
     PREVIOUS = auto()
 
 
-class SinglyLinkedStream(LinearStream):
+class SinglyLinkedStream(LinearStream[VT]):
     """A singly linked list class implemented as a stream."""
 
-    __slots__ = (
+    __slots__: Iterable[str] = (
         'does_memoize',
         '_value',
         '_next',
         '_next_thunk',
     )
 
-    def __init__(self, value, next_thunk, *, does_memoize=True):
+    does_memoize: bool
+    _value: VT
+    _next: Optional[SinglyLinkedStream[VT]]
+    _next_thunk: Callable[[], Optional[SinglyLinkedStream[VT]]]
+
+    def __init__(
+            self,
+            value: VT,
+            next_thunk: Callable[[], Optional[SinglyLinkedStream[VT]]],
+            *,
+            does_memoize: bool=True
+    ) -> None:
         """:param value: the value of the stream node.
 
         :param next_thunk: a zero-argument function that should return
@@ -104,7 +129,7 @@ class SinglyLinkedStream(LinearStream):
         self._next_thunk = next_thunk
         self.does_memoize = does_memoize
 
-    def __contains__(self, value):
+    def __contains__(self, value: VT) -> bool:
         """Determines whether ``value`` is in the stream. Use with
         caution as this will not terminate if the stream is infinite.
 
@@ -113,7 +138,7 @@ class SinglyLinkedStream(LinearStream):
 
         return value in iter(self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Returns the canonical string representation of the stream
         node.
         """
@@ -126,7 +151,7 @@ class SinglyLinkedStream(LinearStream):
         )
 
     @property
-    def next(self):
+    def next(self) -> Optional[SinglyLinkedStream[VT]]:
         """Returns the next node."""
 
         try:
@@ -140,13 +165,13 @@ class SinglyLinkedStream(LinearStream):
             return next_
 
     @property
-    def value(self):
+    def value(self) -> VT:
         """Returns the value of the node."""
 
         return self._value
 
     @value.setter
-    def value(self, value):
+    def value(self, value: VT) -> None:
         """Sets the value of the node.
 
         :param value: the value to set
@@ -154,7 +179,10 @@ class SinglyLinkedStream(LinearStream):
 
         self._value = value
 
-    def filter(self, predicate=None):
+    def filter(
+            self,
+            predicate: Callable[[VT], bool]=None,
+    ) -> Optional[SinglyLinkedStream[VT]]:
         """Returns a new stream that filters out the values that do not
         satisfy the predicate.
 
@@ -180,7 +208,12 @@ class SinglyLinkedStream(LinearStream):
         )
 
     @classmethod
-    def map(cls, fn, *streams, does_memoize=True):
+    def map(
+            cls,
+            fn: Callable[..., MT],
+            *streams: SinglyLinkedStream,
+            does_memoize: bool=True
+    ) -> SinglyLinkedStream[MT]:
         """Returns a new stream that contains the return values of the
         function applied to each item in the streams.
 
@@ -207,7 +240,7 @@ class SinglyLinkedStream(LinearStream):
             does_memoize=does_memoize,
         )
 
-    def _starter(self, n):
+    def _starter(self, n: int) -> SinglyLinkedStream[VT]:
         """Returns the node that is ``n`` nodes away from ``self``.
 
         :param n: the number of nodes away to start from ``self``
@@ -221,13 +254,16 @@ class SinglyLinkedStream(LinearStream):
 
         return node
 
-    def _stepper(self, n):
+    def _stepper(self, n: int) -> SinglyLinkedStream[VT]:
         """Returns a new stream that skips every ``n - 1`` nodes.
 
         :param n: the number of nodes to skip between nodes
         """
 
-        def step(node, i):
+        def step(
+                node: SinglyLinkedStream[VT],
+                i: int,
+        ) -> Optional[SinglyLinkedStream[VT]]:
             try:
                 node = node._starter(i)
             except IndexError:
@@ -241,13 +277,16 @@ class SinglyLinkedStream(LinearStream):
             does_memoize=self.does_memoize,
         )
 
-    def _stopper(self, n):
+    def _stopper(self, n: int) -> Optional[SinglyLinkedStream[VT]]:
         """Returns a new stream that is limited to ``n`` nodes.
 
         :param n: the number of nodes to which to limit the stream
         """
 
-        def stop(node, i):
+        def stop(
+                node: SinglyLinkedStream[VT],
+                i: int,
+        ) -> Optional[SinglyLinkedStream[VT]]:
             if (next_ := node.next) is None:
                 if i > 1:
                     raise IndexError('node index out of range.')
@@ -263,7 +302,11 @@ class SinglyLinkedStream(LinearStream):
         )
 
     @classmethod
-    def _from_iterator(cls, iterator, does_memoize=True):
+    def _from_iterator(
+            cls,
+            iterator: Iterator[VT],
+            does_memoize: bool=True,
+    ) -> Optional[SinglyLinkedStream[VT]]:
         """Returns a new stream that contains data from an iterator. Use
         of the iterator elsewhere afterward is generally inadvisable.
         Otherwise, the stream might become out of sync.
@@ -288,22 +331,25 @@ class SinglyLinkedStream(LinearStream):
             return None
 
 
-class DoublyLinkedStream(SinglyLinkedStream, Reversible):
+class DoublyLinkedStream(SinglyLinkedStream[VT], Reversible[VT]):
     """A doubly linked list class implemented as a stream."""
 
-    __slots__ = (
+    __slots__: Iterable[str] = (
         '_previous',
         '_previous_thunk',
     )
 
+    _previous: Optional[DoublyLinkedStream[VT]]
+    _previous_thunk: Callable[[], Optional[DoublyLinkedStream[VT]]]
+
     def __init__(
             self,
-            value,
-            next_thunk,
-            previous_thunk=None,
+            value: VT,
+            next_thunk: Callable[[], Optional[DoublyLinkedStream[VT]]],
+            previous_thunk: Callable[[], Optional[DoublyLinkedStream[VT]]]=None,
             *,
-            does_memoize=True
-    ):
+            does_memoize: bool=True
+    ) -> None:
         """:param value: the value of the stream node
 
         :param next_thunk: a zero-argument function that should return
@@ -331,7 +377,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
 
         self._previous_thunk = previous_thunk
 
-    def __contains__(self, value):
+    def __contains__(self, value: VT) -> bool:
         """Determines whether ``value`` is in the stream. Use with
         caution as this will not terminate if the stream is infinite.
 
@@ -340,7 +386,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
 
         return value in iter(self) or value in iter(reversed(self).next)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Returns the canonical string representation of the node."""
 
         return '{}({}, {}, {}, does_memoize={})'.format(
@@ -351,7 +397,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
             repr(self.does_memoize)
         )
 
-    def __reversed__(self):
+    def __reversed__(self) -> DoublyLinkedStream[VT]:
         """Returns the stream in reverse."""
 
         if self.does_memoize:
@@ -388,7 +434,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
         )
 
     @property
-    def next(self):
+    def next(self) -> Optional[DoublyLinkedStream[VT]]:
         """Returns the next node."""
 
         try:
@@ -402,7 +448,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
             return next_
 
     @property
-    def previous(self):
+    def previous(self) -> Optional[DoublyLinkedStream[VT]]:
         """Returns the previous node."""
 
         try:
@@ -416,13 +462,13 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
             return previous
 
     @property
-    def value(self):
+    def value(self) -> VT:
         """Returns the value of the node."""
 
         return self._value
 
     @value.setter
-    def value(self, value):
+    def value(self, value: VT) -> None:
         """Sets the value of the node.
 
         :param value: the value to set
@@ -430,7 +476,10 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
 
         self._value = value
 
-    def filter(self, predicate=None):
+    def filter(
+            self,
+            predicate: Callable[[VT], bool]=None,
+    ) -> Optional[DoublyLinkedStream[VT]]:
         """Returns a new stream that filters out the values that do not
         satisfy the predicate.
 
@@ -446,7 +495,12 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
         return self._filter(predicate, TraversalDirection.NEXT)
 
     @classmethod
-    def map(cls, fn, *streams, does_memoize=True):
+    def map(
+            cls,
+            fn: Callable[..., MT],
+            *streams: DoublyLinkedStream,
+            does_memoize: bool=True
+    ) -> DoublyLinkedStream[MT]:
         """Returns a new stream that contains the return values of the
         function applied to each item in the streams.
 
@@ -506,7 +560,11 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
             does_memoize=False,
         )
 
-    def _filter(self, predicate, traversal_direction):
+    def _filter(
+            self,
+            predicate: Callable[[VT], bool],
+            traversal_direction: TraversalDirection,
+    ) -> Optional[DoublyLinkedStream[VT]]:
         """Returns a new stream that filters out the values that do not
         satisfy the predicate.
 
@@ -570,7 +628,15 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
         )
 
     @classmethod
-    def _from_iterator(cls, iterator, previous_thunk=None, does_memoize=True):
+    def _from_iterator(
+            cls,
+            iterator: Iterator[VT],
+            previous_thunk: Callable[
+                [],
+                DoublyLinkedStream[VT],
+            ]=lambda: None,
+            does_memoize: bool=True
+    ) -> Optional[DoublyLinkedStream[VT]]:
         """Returns a new stream that contains data from an iterator. Use
         of the iterator elsewhere afterward is generally inadvisable.
         Otherwise, the stream might become out of sync.
@@ -609,7 +675,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
             does_memoize=does_memoize,
         ))
 
-    def _starter(self, n):
+    def _starter(self, n: int) -> DoublyLinkedStream[VT]:
         """Returns the node that is ``n`` nodes away from ``self``.
 
         :param n: the number of nodes away to start from ``self``
@@ -630,7 +696,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
 
         return node
 
-    def _stepper(self, n):
+    def _stepper(self, n: int) -> DoublyLinkedStream[VT]:
         """Returns a new stream that skips every ``n - 1`` nodes.
 
         :param n: the number of nodes to skip between nodes
@@ -685,7 +751,7 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
             does_memoize=self.does_memoize,
         )
 
-    def _stopper(self, n):
+    def _stopper(self, n: int) -> Optional[DoublyLinkedStream[VT]]:
         """Returns a new stream that is limited to ``n`` nodes.
 
         :param n: the number of nodes to which to limit the stream
@@ -728,7 +794,10 @@ class DoublyLinkedStream(SinglyLinkedStream, Reversible):
         )
 
 
-def thunk_init(thunk, init):
+def thunk_init(
+        thunk: Callable[[], VT],
+        init: Callable[[Any], None],
+) -> Callable[[], VT]:
     """Initializes the object returned by a thunk and wraps it into a
     new thunk. This is useful when working with thunks that can't or
     shouldn't be changed.
@@ -739,7 +808,7 @@ def thunk_init(thunk, init):
     :param init: the function that initializes the return value of thunk
     """
 
-    def get_object():
+    def get_object() -> VT:
         """Calls the thunk from the ``thunk_init`` call that created
         this function and initializes the thunk's return value. See the
         docstring for ``thunk_init`` for more information.

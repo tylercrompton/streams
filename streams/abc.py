@@ -13,46 +13,65 @@
 # You should have received a copy of the GNU General Public License
 # along with Streams.  If not, see <https://www.gnu.org/licenses/>.
 
+from __future__ import annotations
 from abc import ABCMeta, abstractmethod
-from collections.abc import Container, Iterable
+from collections.abc import (
+    Callable,
+    Container,
+    Iterable,
+    Iterator,
+)
+from typing import (
+    Optional,
+    TypeVar,
+    Union,
+)
 
 __all__ = (
     'LinearStream',
     'Stream',
 )
 
+MT = TypeVar('MT')  # type of values after mapping
+VT = TypeVar('VT')  # type of values before or without mapping
 
-class Stream(Container, metaclass=ABCMeta):
+
+class Stream(Container[VT], metaclass=ABCMeta):
     """An abstract base class for stream classes (i.e. an
     interface for robust objects that are capable of holding an
     indefinite amount of data). All stream classes should directly or
     indirectly derive from this class.
     """
 
-    __slots__ = ()
+    __slots__: Iterable[str] = ()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Returns the canonical string representation of the node."""
 
         return f'{self.__class__.__name__}({repr(self.value)})'
 
     @property
     @abstractmethod
-    def value(self):
+    def value(self) -> VT:
         """Returns the value of the node."""
 
         raise NotImplementedError
 
     @value.setter
     @abstractmethod
-    def value(self, value):
+    def value(self, value: VT) -> None:
         """Sets the value of the node."""
 
         raise NotImplementedError
 
     @classmethod
     @abstractmethod
-    def map(cls, fn, *streams, does_memoize=True):
+    def map(
+            cls,
+            fn: Callable[..., MT],
+            *streams: Stream,
+            does_memoize: bool=True
+    ) -> Stream[MT]:
         """Returns a new stream that contains the return values of the
         function applied to each item in the streams.
 
@@ -72,14 +91,17 @@ class Stream(Container, metaclass=ABCMeta):
         raise NotImplementedError
 
 
-class LinearStream(Stream, Iterable, metaclass=ABCMeta):
+class LinearStream(Stream[VT], Iterable[VT], metaclass=ABCMeta):
     """An abstract linearly linked list class implemented as a stream
     class.
     """
 
-    __slots__ = ()
+    __slots__: Iterable[str] = ()
 
-    def __getitem__(self, key):
+    def __getitem__(
+            self,
+            key: Union[int, slice],
+    ) -> Union[VT, LinearStream[VT]]:
         """Returns the value contained at a particular index or the
         items contained within a particular slice.
 
@@ -129,7 +151,7 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
 
         return node
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[VT]:
         """Returns an iterator that yields the values from the stream.
         """
 
@@ -141,13 +163,16 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def next(self):
+    def next(self) -> Optional[LinearStream[VT]]:
         """Returns the next node."""
 
         raise NotImplementedError
 
     @abstractmethod
-    def filter(self, predicate=None):
+    def filter(
+            self,
+            predicate: Callable[[VT], bool]=None,
+    ) -> LinearStream[VT]:
         """Returns a new stream that filters out the values that do not
         satisfy the predicate.
 
@@ -159,7 +184,11 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
         raise NotImplementedError
 
     @classmethod
-    def from_iterable(cls, iterable, does_memoize=True):
+    def from_iterable(
+            cls,
+            iterable: Iterable[VT],
+            does_memoize: bool=True,
+    ) -> Optional[LinearStream[VT]]:
         """Returns a new stream that contains data from an iterable.
         Use of the iterable elsewhere afterward is generally inadvisable
         Otherwise, the stream might become out of sync.
@@ -177,7 +206,11 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def _from_iterator(cls, iterator, does_memoize=True):
+    def _from_iterator(
+            cls,
+            iterator: Iterator[VT],
+            does_memoize: bool=True,
+    ) -> Optional[LinearStream[VT]]:
         """Returns a new stream that contains data from an iterator. Use
         of the iterator elsewhere afterward is generally inadvisable.
         Otherwise, the stream might become out of sync.
@@ -195,7 +228,7 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def _starter(self, n):
+    def _starter(self, n: int) -> LinearStream[VT]:
         """Returns the node that is ``n`` nodes away from ``self``.
 
         :param n: the number of nodes away to start from ``self``
@@ -204,7 +237,7 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def _stepper(self, n):
+    def _stepper(self, n: int) -> LinearStream[VT]:
         """Returns a new stream that skips every ``n - 1`` nodes.
 
         :param n: the number of nodes to skip between nodes
@@ -213,7 +246,7 @@ class LinearStream(Stream, Iterable, metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def _stopper(self, n):
+    def _stopper(self, n: int) -> LinearStream[VT]:
         """Returns a new stream that is limited to ``n`` nodes.
 
         :param n: the number of nodes to which to limit the stream
