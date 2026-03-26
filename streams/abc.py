@@ -21,11 +21,7 @@ from collections.abc import (
     Iterable,
     Iterator,
 )
-from typing import (
-    Optional,
-    TypeVar,
-    Union,
-)
+from typing import TypeVar
 
 __all__ = (
     'LinearStream',
@@ -98,10 +94,7 @@ class LinearStream(Stream[VT], Iterable[VT], metaclass=ABCMeta):
 
     __slots__: Iterable[str] = ()
 
-    def __getitem__(
-            self,
-            key: Union[int, slice],
-    ) -> Union[VT, LinearStream[VT]]:
+    def __getitem__(self, key: int | slice) -> VT | LinearStream[VT]:
         """Returns the value contained at a particular index or the
         items contained within a particular slice.
 
@@ -163,7 +156,7 @@ class LinearStream(Stream[VT], Iterable[VT], metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def next(self) -> Optional[LinearStream[VT]]:
+    def next(self) -> LinearStream[VT] | None:
         """Returns the next node."""
 
         raise NotImplementedError
@@ -188,7 +181,7 @@ class LinearStream(Stream[VT], Iterable[VT], metaclass=ABCMeta):
             cls,
             iterable: Iterable[VT],
             does_memoize: bool=True,
-    ) -> Optional[LinearStream[VT]]:
+    ) -> LinearStream[VT] | None:
         """Returns a new stream that contains data from an iterable.
         Use of the iterable elsewhere afterward is generally inadvisable
         Otherwise, the stream might become out of sync.
@@ -210,7 +203,7 @@ class LinearStream(Stream[VT], Iterable[VT], metaclass=ABCMeta):
             cls,
             iterator: Iterator[VT],
             does_memoize: bool=True,
-    ) -> Optional[LinearStream[VT]]:
+    ) -> LinearStream[VT] | None:
         """Returns a new stream that contains data from an iterator. Use
         of the iterator elsewhere afterward is generally inadvisable.
         Otherwise, the stream might become out of sync.
