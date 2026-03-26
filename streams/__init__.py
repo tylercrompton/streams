@@ -60,7 +60,6 @@ from enum import auto, Enum
 from operator import attrgetter
 from typing import (
     Any,
-    Optional,
     TypeVar,
 )
 
@@ -76,7 +75,7 @@ MT = TypeVar('MT')  # type of values after mapping
 VT = TypeVar('VT')  # type of values before or without mapping
 
 
-def reversed_node(node: Optional[DoublyLinkedStream]):
+def reversed_node(node: DoublyLinkedStream | None):
     try:
         return reversed(node)
     except TypeError:
@@ -100,13 +99,13 @@ class SinglyLinkedStream(LinearStream[VT]):
 
     does_memoize: bool
     _value: VT
-    _next: Optional[SinglyLinkedStream[VT]]
-    _next_thunk: Callable[[], Optional[SinglyLinkedStream[VT]]]
+    _next: SinglyLinkedStream[VT] | None
+    _next_thunk: Callable[[], SinglyLinkedStream[VT] | None]
 
     def __init__(
             self,
             value: VT,
-            next_thunk: Callable[[], Optional[SinglyLinkedStream[VT]]],
+            next_thunk: Callable[[], SinglyLinkedStream[VT] | None],
             *,
             does_memoize: bool=True
     ) -> None:
@@ -151,7 +150,7 @@ class SinglyLinkedStream(LinearStream[VT]):
         )
 
     @property
-    def next(self) -> Optional[SinglyLinkedStream[VT]]:
+    def next(self) -> SinglyLinkedStream[VT] | None:
         """Returns the next node."""
 
         try:
@@ -182,7 +181,7 @@ class SinglyLinkedStream(LinearStream[VT]):
     def filter(
             self,
             predicate: Callable[[VT], bool]=None,
-    ) -> Optional[SinglyLinkedStream[VT]]:
+    ) -> SinglyLinkedStream[VT] | None:
         """Returns a new stream that filters out the values that do not
         satisfy the predicate.
 
@@ -263,7 +262,7 @@ class SinglyLinkedStream(LinearStream[VT]):
         def step(
                 node: SinglyLinkedStream[VT],
                 i: int,
-        ) -> Optional[SinglyLinkedStream[VT]]:
+        ) -> SinglyLinkedStream[VT] | None:
             try:
                 node = node._starter(i)
             except IndexError:
@@ -277,7 +276,7 @@ class SinglyLinkedStream(LinearStream[VT]):
             does_memoize=self.does_memoize,
         )
 
-    def _stopper(self, n: int) -> Optional[SinglyLinkedStream[VT]]:
+    def _stopper(self, n: int) -> SinglyLinkedStream[VT] | None:
         """Returns a new stream that is limited to ``n`` nodes.
 
         :param n: the number of nodes to which to limit the stream
@@ -286,7 +285,7 @@ class SinglyLinkedStream(LinearStream[VT]):
         def stop(
                 node: SinglyLinkedStream[VT],
                 i: int,
-        ) -> Optional[SinglyLinkedStream[VT]]:
+        ) -> SinglyLinkedStream[VT] | None:
             if (next_ := node.next) is None:
                 if i > 1:
                     raise IndexError('node index out of range.')
@@ -306,7 +305,7 @@ class SinglyLinkedStream(LinearStream[VT]):
             cls,
             iterator: Iterator[VT],
             does_memoize: bool=True,
-    ) -> Optional[SinglyLinkedStream[VT]]:
+    ) -> SinglyLinkedStream[VT] | None:
         """Returns a new stream that contains data from an iterator. Use
         of the iterator elsewhere afterward is generally inadvisable.
         Otherwise, the stream might become out of sync.
@@ -339,14 +338,14 @@ class DoublyLinkedStream(SinglyLinkedStream[VT], Reversible[VT]):
         '_previous_thunk',
     )
 
-    _previous: Optional[DoublyLinkedStream[VT]]
-    _previous_thunk: Callable[[], Optional[DoublyLinkedStream[VT]]]
+    _previous: DoublyLinkedStream[VT] | None
+    _previous_thunk: Callable[[], DoublyLinkedStream[VT] | None]
 
     def __init__(
             self,
             value: VT,
-            next_thunk: Callable[[], Optional[DoublyLinkedStream[VT]]],
-            previous_thunk: Callable[[], Optional[DoublyLinkedStream[VT]]]=None,
+            next_thunk: Callable[[], DoublyLinkedStream[VT] | None],
+            previous_thunk: Callable[[], DoublyLinkedStream[VT] | None]=None,
             *,
             does_memoize: bool=True
     ) -> None:
@@ -434,7 +433,7 @@ class DoublyLinkedStream(SinglyLinkedStream[VT], Reversible[VT]):
         )
 
     @property
-    def next(self) -> Optional[DoublyLinkedStream[VT]]:
+    def next(self) -> DoublyLinkedStream[VT] | None:
         """Returns the next node."""
 
         try:
@@ -448,7 +447,7 @@ class DoublyLinkedStream(SinglyLinkedStream[VT], Reversible[VT]):
             return next_
 
     @property
-    def previous(self) -> Optional[DoublyLinkedStream[VT]]:
+    def previous(self) -> DoublyLinkedStream[VT] | None:
         """Returns the previous node."""
 
         try:
@@ -479,7 +478,7 @@ class DoublyLinkedStream(SinglyLinkedStream[VT], Reversible[VT]):
     def filter(
             self,
             predicate: Callable[[VT], bool]=None,
-    ) -> Optional[DoublyLinkedStream[VT]]:
+    ) -> DoublyLinkedStream[VT] | None:
         """Returns a new stream that filters out the values that do not
         satisfy the predicate.
 
@@ -564,7 +563,7 @@ class DoublyLinkedStream(SinglyLinkedStream[VT], Reversible[VT]):
             self,
             predicate: Callable[[VT], bool],
             traversal_direction: TraversalDirection,
-    ) -> Optional[DoublyLinkedStream[VT]]:
+    ) -> DoublyLinkedStream[VT] | None:
         """Returns a new stream that filters out the values that do not
         satisfy the predicate.
 
@@ -636,7 +635,7 @@ class DoublyLinkedStream(SinglyLinkedStream[VT], Reversible[VT]):
                 DoublyLinkedStream[VT],
             ]=lambda: None,
             does_memoize: bool=True
-    ) -> Optional[DoublyLinkedStream[VT]]:
+    ) -> DoublyLinkedStream[VT] | None:
         """Returns a new stream that contains data from an iterator. Use
         of the iterator elsewhere afterward is generally inadvisable.
         Otherwise, the stream might become out of sync.
@@ -751,7 +750,7 @@ class DoublyLinkedStream(SinglyLinkedStream[VT], Reversible[VT]):
             does_memoize=self.does_memoize,
         )
 
-    def _stopper(self, n: int) -> Optional[DoublyLinkedStream[VT]]:
+    def _stopper(self, n: int) -> DoublyLinkedStream[VT] | None:
         """Returns a new stream that is limited to ``n`` nodes.
 
         :param n: the number of nodes to which to limit the stream
